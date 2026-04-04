@@ -1,0 +1,26 @@
+[project]
+name = "mat401-computational-project"
+description = "Simulation of the rigid-body dynamics of a rotating cone via the Runge-Kutta method."
+authors = [
+    {name = "Finn Else-McCormick", email = "2200864@uad.ac.uk"}
+]
+dynamic=["version"]
+requires-python = ">=3.14"
+readme = "README.md"
+license = "MIT"
+
+dependencies = []
+
+[build-system]
+requires = [
+    "hatchling >= 1.26",
+    "versioningit",
+]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+source = "versioningit"
+
+[tool.versioningit.vcs]
+method = "git"
+default-tag = "0.0.0"
