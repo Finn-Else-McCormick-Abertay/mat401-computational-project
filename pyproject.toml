@@ -10,8 +10,8 @@ readme = "README.md"
 license = "MIT"
 
 dependencies = [
+    "matplotlib>=3.10.8",
     "numpy>=2.4.4",
-    "seaborn>=0.13.2",
 ]
 
 [dependency-groups]
