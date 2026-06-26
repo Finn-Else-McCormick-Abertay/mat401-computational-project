@@ -12,6 +12,7 @@ license = "MIT"
 dependencies = [
     "matplotlib>=3.10.8",
     "numpy>=2.4.4",
+    "typeguard>=4.5.2",
 ]
 
 [dependency-groups]
@@ -36,3 +37,8 @@ source = "versioningit"
 [tool.versioningit.vcs]
 method = "git"
 default-tag = "0.0.0"
+
+[tool.ruff]
+line-length = 320
+# Disable formatting rules
+lint.ignore = ["E701", "E702"]
