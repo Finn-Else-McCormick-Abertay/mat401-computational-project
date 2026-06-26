@@ -1,5 +1,5 @@
 import math
-from typing import Any, Callable, Optional
+from typing import Any, Callable, List, Optional
 
 import numpy as np
 from numpy.typing import NDArray
@@ -17,31 +17,39 @@ class MagnitudeRecorder:
         # Don't ask me why the function you use to get the magnitude is called 'norm'
         data_point[self.key] = np.linalg.norm(arr)
 
+type SolverCallable = Callable[[NDArray[np.number] | Motion, float, Any],NDArray[np.number] | Motion]
+type RecorderCallable = Callable[[DataSet.DataPoint, NDArray, Any]]
+
 def simulate(
-    solver: Callable[[NDArray[np.number] | Motion, float, Any],NDArray[np.number] | Motion],
+    solver: SolverCallable,
     initial: NDArray[np.number] | Motion,
-    context: Any,
     duration: float,
     step_duration: float = 0.1,
-    array_name: Optional[str] = None,
-    additional_recorder_callback: Optional[Callable[[DataSet.DataPoint, NDArray, Any]]] = None,
+    name: Optional[str] = None,
+    context: Any = None,
+    recorder_cb: List[RecorderCallable] | RecorderCallable | None = None,
 ):
+    if not type_matches(recorder_cb, List) and recorder_cb is not None:
+        recorder_cb = [recorder_cb] # type: ignore
+    elif recorder_cb is None:
+        recorder_cb = []
+             
     data: DataSet[float] = DataSet(x_key="time")
 
     def record_data(motion: NDArray[np.number] | Motion, time: float):
         nonlocal data
-        nonlocal array_name
+        nonlocal name
         nonlocal context
-        nonlocal additional_recorder_callback
+        nonlocal recorder_cb
 
         final_array: NDArray = motion.r if type_matches(motion, Motion) else motion # type: ignore
 
         data_point: DataSet[float].DataPoint = {
             "time": time,
-            array_name if array_name else "__unnamed__": final_array
+            name if name else "__unnamed__": final_array
         }
-        if additional_recorder_callback:
-            additional_recorder_callback(data_point, final_array, context) # type: ignore
+        for cb in recorder_cb: # type: ignore
+            cb(data_point, final_array, context)
 
         data.add_data(data_point)
 
